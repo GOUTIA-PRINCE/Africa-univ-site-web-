@@ -19,8 +19,9 @@
                 <i class="fas" [ngClass]="isSearchOpen ? 'fa-times' : 'fa-search'"></i>
             </button>
             <div class="search-bar" *ngIf="isSearchOpen">
-                <input type="text" placeholder="Rechercher un produit...">
-                <button><i class="fas fa-search"></i></button>
+                <input type="text" placeholder="Rechercher un produit..." [(ngModel)]="searchTerm"
+                    (keyup.enter)="onSearch()">
+                <button (click)="onSearch()"><i class="fas fa-search"></i></button>
             </div>
             <a routerLink="/cart" class="icon-btn cart-btn" aria-label="Panier">
                 <i class="fas fa-shopping-bag"></i>

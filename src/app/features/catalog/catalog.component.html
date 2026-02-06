@@ -1,20 +1,26 @@
 <div class="catalog-container">
     <aside class="filters">
         <h3>Filtres</h3>
+
+        <div class="filter-group" *ngIf="searchTerm">
+            <p>Recherche : <strong>{{ searchTerm }}</strong></p>
+            <button class="btn-sm" (click)="searchTerm = ''; applyFilters()">Effacer</button>
+        </div>
+
         <div class="filter-group">
             <h4>Catégories</h4>
-            <label><input type="checkbox"> Électronique</label>
-            <label><input type="checkbox"> Vêtements</label>
-            <label><input type="checkbox"> Maison</label>
+            <label *ngFor="let cat of categories">
+                <input type="checkbox" [(ngModel)]="selectedCategories[cat]" (change)="onCategoryChange()"> {{ cat }}
+            </label>
         </div>
         <div class="filter-group">
-            <h4>Prix</h4>
-            <input type="range" min="0" max="2000">
+            <h4>Prix max: {{ maxPrice }} €</h4>
+            <input type="range" min="0" max="2000" step="50" [(ngModel)]="maxPrice" (input)="applyFilters()">
         </div>
     </aside>
 
     <section class="product-list">
-        <div class="product-card" *ngFor="let product of products">
+        <div class="product-card" *ngFor="let product of filteredProducts">
             <div class="product-image">
                 <img [src]="product.image" [alt]="product.name">
                 <button class="quick-view">Aperçu</button>
@@ -24,6 +30,9 @@
                 <p class="price">{{ product.price }} €</p>
                 <button class="btn btn-primary" (click)="addToCart(product)">Ajouter au panier</button>
             </div>
+        </div>
+        <div class="no-results" *ngIf="filteredProducts.length === 0">
+            <p>Aucun produit ne correspond à vos critères.</p>
         </div>
     </section>
 </div>
