@@ -1,0 +1,36 @@
+<div class="cart-page container">
+    <h1>Votre Panier</h1>
+
+    <div class="cart-layout">
+        <div class="cart-items">
+            <div class="cart-item" *ngFor="let item of cartItems">
+                <img [src]="item.image" alt="Produit">
+                <div class="item-details">
+                    <h3>{{ item.name }}</h3>
+                    <p>{{ item.price }} €</p>
+                </div>
+                <div class="item-actions">
+                    <input type="number" [value]="item.quantity" min="1">
+                    <button class="remove-btn"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+            <h2>Résumé</h2>
+            <div class="summary-line">
+                <span>Sous-total</span>
+                <span>{{ total }} €</span>
+            </div>
+            <div class="summary-line">
+                <span>Livraison</span>
+                <span>Gratuit</span>
+            </div>
+            <div class="summary-line total">
+                <span>Total</span>
+                <span>{{ total }} €</span>
+            </div>
+            <button class="btn btn-primary checkout-btn">Commander</button>
+        </div>
+    </div>
+</div>

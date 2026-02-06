@@ -1,0 +1,45 @@
+<section class="hero">
+    <div class="hero-content">
+        <h1>Découvrez l'Excellence <br><span>Tech & Lifestyle</span></h1>
+        <p>La meilleure sélection de produits pour votre quotidien.</p>
+        <div class="cta-group">
+            <a routerLink="/catalog" class="btn btn-primary">Voir la boutique</a>
+            <a routerLink="/about" class="btn btn-secondary">En savoir plus</a>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <i class="fas fa-truck"></i>
+        <h3>Livraison Rapide</h3>
+        <p>Partout en Afrique et dans le monde</p>
+    </div>
+    <div class="feature-card">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Paiement Sécurisé</h3>
+        <p>Transactions cryptées et protégées</p>
+    </div>
+    <div class="feature-card">
+        <i class="fas fa-headset"></i>
+        <h3>Support 24/7</h3>
+        <p>Une équipe à votre écoute</p>
+    </div>
+</section>
+
+<section class="featured-products">
+    <div class="section-header">
+        <h2>Produits Populaires</h2>
+        <a routerLink="/catalog">Tout voir &rarr;</a>
+    </div>
+    <div class="products-grid">
+        <!-- Placeholder for product cards -->
+        <div class="product-card-placeholder" *ngFor="let item of [1,2,3,4]">
+            <div class="image-box"></div>
+            <div class="text-box">
+                <div class="line title"></div>
+                <div class="line price"></div>
+            </div>
+        </div>
+    </div>
+</section>

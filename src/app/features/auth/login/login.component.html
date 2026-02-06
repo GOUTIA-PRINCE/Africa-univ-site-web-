@@ -1,0 +1,41 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>{{ isLoginMode ? 'Connexion' : 'Inscription' }}</h2>
+        <p class="subtitle">Bienvenue sur AfricaUniv Modern</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" formControlName="email" placeholder="votre@email.com">
+                </div>
+                <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="error">
+                    Email valide requis
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" formControlName="password" placeholder="••••••••">
+                </div>
+                <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
+                    Min. 6 caractères
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+                {{ isLoginMode ? 'Se connecter' : "S'inscrire" }}
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>
+                {{ isLoginMode ? "Pas encore de compte ?" : "Déjà un compte ?" }}
+                <a (click)="toggleMode()">{{ isLoginMode ? "Créer un compte" : "Se connecter" }}</a>
+            </p>
+        </div>
+    </div>
+</div>

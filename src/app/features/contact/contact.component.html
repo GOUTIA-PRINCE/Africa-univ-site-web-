@@ -1,0 +1,55 @@
+<div class="contact-page container">
+    <div class="contact-header">
+        <h1>Contactez-nous</h1>
+        <p>Une question ? Une suggestion ? Nous sommes à votre écoute.</p>
+    </div>
+
+    <div class="contact-content">
+        <div class="contact-info">
+            <div class="info-card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Adresse</h3>
+                <p>123 Rue de l'Innovation, Tech City, Afrique</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-phone"></i>
+                <h3>Téléphone</h3>
+                <p>+221 33 123 45 67</p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-envelope"></i>
+                <h3>Email</h3>
+                <p>contact&#64;africauniv-modern.com</p>
+            </div>
+        </div>
+
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+            <h3>Envoyez un message</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nom complet</label>
+                    <input type="text" formControlName="name" placeholder="Votre nom">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" formControlName="email" placeholder="votre@email.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Sujet</label>
+                <input type="text" formControlName="subject" placeholder="Sujet de votre message">
+            </div>
+
+            <div class="form-group">
+                <label>Message</label>
+                <textarea formControlName="message" rows="5" placeholder="Comment pouvons-nous vous aider ?"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid || submitted">
+                {{ submitted ? 'Envoi en cours...' : 'Envoyer le message' }}
+            </button>
+        </form>
+    </div>
+</div>

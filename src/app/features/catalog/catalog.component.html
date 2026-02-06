@@ -1,0 +1,29 @@
+<div class="catalog-container">
+    <aside class="filters">
+        <h3>Filtres</h3>
+        <div class="filter-group">
+            <h4>Catégories</h4>
+            <label><input type="checkbox"> Électronique</label>
+            <label><input type="checkbox"> Vêtements</label>
+            <label><input type="checkbox"> Maison</label>
+        </div>
+        <div class="filter-group">
+            <h4>Prix</h4>
+            <input type="range" min="0" max="2000">
+        </div>
+    </aside>
+
+    <section class="product-list">
+        <div class="product-card" *ngFor="let product of products">
+            <div class="product-image">
+                <img [src]="product.image" [alt]="product.name">
+                <button class="quick-view">Aperçu</button>
+            </div>
+            <div class="product-info">
+                <h3>{{ product.name }}</h3>
+                <p class="price">{{ product.price }} €</p>
+                <button class="btn btn-primary">Ajouter au panier</button>
+            </div>
+        </div>
+    </section>
+</div>

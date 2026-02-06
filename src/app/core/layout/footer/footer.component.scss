@@ -1,0 +1,55 @@
+.site-footer {
+    background-color: #1a1a1a;
+    color: #fff;
+    padding: 3rem 0 0;
+    margin-top: auto;
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem 3rem;
+    }
+
+    h3 {
+        margin-top: 0;
+
+        span {
+            color: #e67e22;
+        }
+    }
+
+    h4 {
+        margin-bottom: 1.5rem;
+        color: #f1f1f1;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+            margin-bottom: 0.8rem;
+
+            a {
+                color: #aaa;
+                text-decoration: none;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #e67e22;
+                }
+            }
+        }
+    }
+
+    .footer-bottom {
+        background-color: #111;
+        text-align: center;
+        padding: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+}
