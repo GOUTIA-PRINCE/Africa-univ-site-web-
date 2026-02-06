@@ -22,7 +22,7 @@
             <div class="product-info">
                 <h3>{{ product.name }}</h3>
                 <p class="price">{{ product.price }} €</p>
-                <button class="btn btn-primary">Ajouter au panier</button>
+                <button class="btn btn-primary" (click)="addToCart(product)">Ajouter au panier</button>
             </div>
         </div>
     </section>

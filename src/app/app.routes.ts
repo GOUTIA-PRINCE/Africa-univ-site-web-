@@ -12,5 +12,6 @@ export const routes: Routes = [
     { path: 'cart', component: CartComponent },
     { path: 'login', component: LoginComponent },
     { path: 'contact', component: ContactComponent },
-    { path: 'about', component: AboutComponent }
+    { path: 'about', component: AboutComponent },
+    { path: 'checkout', loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent) }
 ];

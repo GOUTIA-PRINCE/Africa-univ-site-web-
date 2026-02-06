@@ -1,19 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
     selector: 'app-cart',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './cart.component.html',
     styleUrl: './cart.component.scss'
 })
 export class CartComponent {
-    cartItems = [
-        { id: 1, name: 'Smartphone Pro X', price: 599, quantity: 1, image: 'https://placehold.co/100x100' }
-    ];
+    cartService = inject(CartService);
 
-    get total() {
-        return this.cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    removeItem(id: number) {
+        this.cartService.removeFromCart(id);
+    }
+
+    updateQuantity(id: number, event: Event) {
+        const input = event.target as HTMLInputElement;
+        const quantity = parseInt(input.value, 10);
+        this.cartService.updateQuantity(id, quantity);
     }
 }

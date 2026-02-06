@@ -3,16 +3,19 @@
 
     <div class="cart-layout">
         <div class="cart-items">
-            <div class="cart-item" *ngFor="let item of cartItems">
+            <div class="cart-item" *ngFor="let item of cartService.cartItems()">
                 <img [src]="item.image" alt="Produit">
                 <div class="item-details">
                     <h3>{{ item.name }}</h3>
                     <p>{{ item.price }} €</p>
                 </div>
                 <div class="item-actions">
-                    <input type="number" [value]="item.quantity" min="1">
-                    <button class="remove-btn"><i class="fas fa-trash"></i></button>
+                    <input type="number" [value]="item.quantity" min="1" (change)="updateQuantity(item.id, $event)">
+                    <button class="remove-btn" (click)="removeItem(item.id)"><i class="fas fa-trash"></i></button>
                 </div>
+            </div>
+            <div class="cart-item" *ngIf="cartService.cartItems().length === 0">
+                <p>Votre panier est vide.</p>
             </div>
         </div>
 
@@ -20,7 +23,7 @@
             <h2>Résumé</h2>
             <div class="summary-line">
                 <span>Sous-total</span>
-                <span>{{ total }} €</span>
+                <span>{{ cartService.cartTotal() }} €</span>
             </div>
             <div class="summary-line">
                 <span>Livraison</span>
@@ -28,9 +31,9 @@
             </div>
             <div class="summary-line total">
                 <span>Total</span>
-                <span>{{ total }} €</span>
+                <span>{{ cartService.cartTotal() }} €</span>
             </div>
-            <button class="btn btn-primary checkout-btn">Commander</button>
+            <button class="btn btn-primary checkout-btn" routerLink="/checkout">Commander</button>
         </div>
     </div>
 </div>

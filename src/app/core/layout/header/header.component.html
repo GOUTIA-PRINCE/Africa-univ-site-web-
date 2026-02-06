@@ -24,7 +24,7 @@
             </div>
             <a routerLink="/cart" class="icon-btn cart-btn" aria-label="Panier">
                 <i class="fas fa-shopping-bag"></i>
-                <span class="badge">0</span>
+                <span class="badge">{{ cartService.cartCount() }}</span>
             </a>
             <a routerLink="/login" class="btn btn-primary-outline">Connexion</a>
         </div>
