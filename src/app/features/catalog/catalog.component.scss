@@ -47,6 +47,7 @@
     .product-image {
         position: relative;
         height: 200px;
+        cursor: pointer;
 
         img {
             width: 100%;
@@ -61,6 +62,12 @@
         h3 {
             font-size: 1rem;
             margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+
+            &:hover {
+                color: var(--primary-color);
+            }
         }
 
         .price {

@@ -21,12 +21,11 @@
 
     <section class="product-list">
         <div class="product-card" *ngFor="let product of filteredProducts">
-            <div class="product-image">
+            <div class="product-image" [routerLink]="['/catalog', product.id]">
                 <img [src]="product.image" [alt]="product.name">
-                <button class="quick-view">Aperçu</button>
             </div>
             <div class="product-info">
-                <h3>{{ product.name }}</h3>
+                <h3 [routerLink]="['/catalog', product.id]">{{ product.name }}</h3>
                 <p class="price">{{ product.price }} €</p>
                 <button class="btn btn-primary" (click)="addToCart(product)">Ajouter au panier</button>
             </div>

@@ -9,6 +9,7 @@ import { AboutComponent } from './features/about/about.component';
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'catalog', component: CatalogComponent },
+    { path: 'catalog/:id', loadComponent: () => import('./features/catalog/product-detail/product-detail.component').then(m => m.ProductDetailComponent) },
     { path: 'cart', component: CartComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent) },
