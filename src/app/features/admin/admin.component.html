@@ -1,0 +1,116 @@
+<div class="admin-dashboard">
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Tableau de bord Admin</h1>
+            <button class="btn btn-primary" (click)="openAddModal()">
+                <i class="fas fa-plus"></i> Nouveau Produit
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-box"></i></div>
+                <div class="stat-info">
+                    <span class="label">Total Produits</span>
+                    <span class="value">{{ products.length }}</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-tags"></i></div>
+                <div class="stat-info">
+                    <span class="label">Catégories</span>
+                    <span class="value">3</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-info">
+                    <span class="label">Ventes (24h)</span>
+                    <span class="value">12</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Produit</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let product of products">
+                        <td>
+                            <img [src]="product.image" [alt]="product.name" class="table-img">
+                        </td>
+                        <td>
+                            <div class="product-name-cell">
+                                <strong>{{ product.name }}</strong>
+                                <small>{{ product.description?.substring(0, 50) }}...</small>
+                            </div>
+                        </td>
+                        <td><span class="badge">{{ product.category }}</span></td>
+                        <td><strong>{{ product.price }} €</strong></td>
+                        <td class="actions">
+                            <button class="btn-icon edit" (click)="openEditModal(product)" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon delete" (click)="deleteProduct(product.id)" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Ajout/Modification -->
+    <div class="modal-overlay" *ngIf="showModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>{{ isEditing ? 'Modifier le Produit' : 'Ajouter un Produit' }}</h2>
+                <button class="close-btn" (click)="closeModal()">&times;</button>
+            </div>
+            <form (ngSubmit)="saveProduct()">
+                <div class="form-group">
+                    <label>Nom du produit</label>
+                    <input type="text" [(ngModel)]="currentProduct.name" name="name" required
+                        placeholder="Ex: Casque Audio">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prix (€)</label>
+                        <input type="number" [(ngModel)]="currentProduct.price" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie</label>
+                        <select [(ngModel)]="currentProduct.category" name="category">
+                            <option value="Électronique">Électronique</option>
+                            <option value="Vêtements">Vêtements</option>
+                            <option value="Maison">Maison</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea [(ngModel)]="currentProduct.description" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL Image</label>
+                    <input type="text" [(ngModel)]="currentProduct.image" name="image">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
