@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CartService } from '../../core/services/cart.service';
+
 import { ProductService } from '../../core/services/product.service';
 import { Product } from '../../core/models/product.model';
 
@@ -14,12 +14,13 @@ import { Product } from '../../core/models/product.model';
     styleUrl: './catalog.component.scss'
 })
 export class CatalogComponent implements OnInit {
-    cartService = inject(CartService);
+
     productService = inject(ProductService);
     route = inject(ActivatedRoute);
 
     allProducts: Product[] = [];
     filteredProducts: Product[] = [];
+    paginatedProducts: Product[] = [];
 
     // Filter states
     searchTerm: string = '';
@@ -30,6 +31,11 @@ export class CatalogComponent implements OnInit {
         'Maison': false
     };
     maxPrice: number = 2000;
+
+    // Pagination states
+    currentPage: number = 1;
+    itemsPerPage: number = 5;
+    totalPages: number = 1;
 
     ngOnInit() {
         this.productService.getProducts().subscribe(products => {
@@ -59,13 +65,43 @@ export class CatalogComponent implements OnInit {
 
             return matchesSearch && matchesCategory && matchesPrice;
         });
+
+        this.currentPage = 1; // Reset to first page when filtering
+        this.updatePagination();
+    }
+
+    updatePagination() {
+        this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage);
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + Number(this.itemsPerPage);
+        this.paginatedProducts = this.filteredProducts.slice(startIndex, endIndex);
+    }
+
+    onItemsPerPageChange() {
+        this.currentPage = 1;
+        this.updatePagination();
+    }
+
+    goToPage(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+            this.updatePagination();
+        }
     }
 
     onCategoryChange() {
         this.applyFilters();
     }
 
-    addToCart(product: Product) {
-        this.cartService.addToCart(product);
+    orderOnWhatsApp(product: Product) {
+        const phoneNumber = '690363577';
+        const message = `Bonjour, je viens de votre site pour ce produit : ${product.name}.
+Caractéristiques : ${product.description || 'N/A'}.
+Prix : ${product.price} €`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/237${phoneNumber}?text=${encodedMessage}`;
+
+        window.open(whatsappUrl, '_blank');
     }
 }

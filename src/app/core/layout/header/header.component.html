@@ -24,10 +24,6 @@
                     (keyup.enter)="onSearch()">
                 <button (click)="onSearch()"><i class="fas fa-search"></i></button>
             </div>
-            <a routerLink="/cart" class="icon-btn cart-btn" aria-label="Panier">
-                <i class="fas fa-shopping-bag"></i>
-                <span class="badge">{{ cartService.cartCount() }}</span>
-            </a>
             <a routerLink="/login" class="btn btn-primary-outline">Connexion</a>
         </div>
     </div>

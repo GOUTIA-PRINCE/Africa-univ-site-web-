@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
-import { CartService } from '../../../core/services/cart.service';
+
 import { Product } from '../../../core/models/product.model';
 
 @Component({
@@ -15,7 +15,7 @@ import { Product } from '../../../core/models/product.model';
 export class ProductDetailComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private productService = inject(ProductService);
-    private cartService = inject(CartService);
+
 
     product: Product | undefined;
 
@@ -26,9 +26,17 @@ export class ProductDetailComponent implements OnInit {
         });
     }
 
-    addToCart() {
+    orderOnWhatsApp() {
         if (this.product) {
-            this.cartService.addToCart(this.product);
+            const phoneNumber = '690363577';
+            const message = `Bonjour, je viens de votre site pour ce produit : ${this.product.name}.
+Caractéristiques : ${this.product.description || 'N/A'}.
+Prix : ${this.product.price} €`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/237${phoneNumber}?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
         }
     }
 }

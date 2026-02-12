@@ -25,11 +25,121 @@
     }
 }
 
-.product-list {
+.product-list-container {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.list-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    .items-per-page {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        select {
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+
+            &:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+        }
+    }
+
+    .results-count {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-light);
+    }
+}
+
+.product-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 2rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding: 2rem 0;
+
+    .btn-pagination {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 50px;
+        color: var(--text-color);
+        cursor: pointer;
+        font-weight: 500;
+        transition: var(--transition);
+
+        &:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: #fff5eb;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .page-numbers {
+        display: flex;
+        gap: 0.5rem;
+
+        .page-num {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+
+            &:hover {
+                border-color: var(--primary-color);
+                color: var(--primary-color);
+            }
+
+            &.active {
+                background: var(--primary-color);
+                color: #fff;
+                border-color: var(--primary-color);
+            }
+        }
+    }
 }
 
 .product-card {

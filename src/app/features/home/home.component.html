@@ -16,9 +16,9 @@
         <p>Partout en Afrique et dans le monde</p>
     </div>
     <div class="feature-card">
-        <i class="fas fa-shield-alt"></i>
-        <h3>Paiement Sécurisé</h3>
-        <p>Transactions cryptées et protégées</p>
+        <i class="fab fa-whatsapp"></i>
+        <h3>Commande WhatsApp</h3>
+        <p>Commandez directement via WhatsApp</p>
     </div>
     <div class="feature-card">
         <i class="fas fa-headset"></i>
@@ -34,11 +34,14 @@
     </div>
     <div class="products-grid">
         <!-- Placeholder for product cards -->
-        <div class="product-card-placeholder" *ngFor="let item of [1,2,3,4]">
-            <div class="image-box"></div>
-            <div class="text-box">
-                <div class="line title"></div>
-                <div class="line price"></div>
+        <div class="product-card" *ngFor="let product of featuredProducts">
+            <div class="product-image" [routerLink]="['/catalog', product.id]">
+                <img [src]="product.image" [alt]="product.name">
+            </div>
+            <div class="product-info">
+                <h3 [routerLink]="['/catalog', product.id]">{{ product.name }}</h3>
+                <p class="price">{{ product.price }} €</p>
+                <button class="btn btn-primary" (click)="orderOnWhatsApp(product)">Commander</button>
             </div>
         </div>
     </div>

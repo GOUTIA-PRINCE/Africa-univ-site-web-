@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CartService } from '../../services/cart.service';
+
 
 @Component({
     selector: 'app-header',
@@ -12,7 +12,7 @@ import { CartService } from '../../services/cart.service';
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-    cartService = inject(CartService);
+
     router = inject(Router);
     isSearchOpen = false;
     searchTerm = '';

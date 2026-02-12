@@ -19,19 +19,52 @@
         </div>
     </aside>
 
-    <section class="product-list">
-        <div class="product-card" *ngFor="let product of filteredProducts">
-            <div class="product-image" [routerLink]="['/catalog', product.id]">
-                <img [src]="product.image" [alt]="product.name">
+    <section class="product-list-container">
+        <div class="list-actions">
+            <div class="items-per-page">
+                <label for="itemsPerPage">Produits par page :</label>
+                <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+                    <option [value]="5">5</option>
+                    <option [value]="10">10</option>
+                    <option [value]="20">20</option>
+                    <option [value]="50">50</option>
+                </select>
             </div>
-            <div class="product-info">
-                <h3 [routerLink]="['/catalog', product.id]">{{ product.name }}</h3>
-                <p class="price">{{ product.price }} €</p>
-                <button class="btn btn-primary" (click)="addToCart(product)">Ajouter au panier</button>
+            <div class="results-count">
+                {{ filteredProducts.length }} produit(s) trouvé(s)
             </div>
         </div>
+
+        <div class="product-list">
+            <div class="product-card" *ngFor="let product of paginatedProducts">
+                <div class="product-image" [routerLink]="['/catalog', product.id]">
+                    <img [src]="product.image" [alt]="product.name">
+                </div>
+                <div class="product-info">
+                    <h3 [routerLink]="['/catalog', product.id]">{{ product.name }}</h3>
+                    <p class="price">{{ product.price }} €</p>
+                    <button class="btn btn-primary" (click)="orderOnWhatsApp(product)">Commander</button>
+                </div>
+            </div>
+        </div>
+
         <div class="no-results" *ngIf="filteredProducts.length === 0">
             <p>Aucun produit ne correspond à vos critères.</p>
+        </div>
+
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button class="btn-pagination" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i> Précédent
+            </button>
+            <div class="page-numbers">
+                <button *ngFor="let p of [].constructor(totalPages); let i = index" class="page-num"
+                    [class.active]="currentPage === i + 1" (click)="goToPage(i + 1)">
+                    {{ i + 1 }}
+                </button>
+            </div>
+            <button class="btn-pagination" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+                Suivant <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </section>
 </div>
