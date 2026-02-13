@@ -27,7 +27,14 @@ fs.ensureDirSync(PROFILES_DIR);
 
 // Ensure db.json exists
 if (!fs.existsSync(DB_FILE)) {
-    fs.writeJsonSync(DB_FILE, { products: [], users: [] });
+    fs.writeJsonSync(DB_FILE, { products: [], users: [], messages: [] });
+} else {
+    // Ensure messages key exists in existing db.json
+    const data = fs.readJsonSync(DB_FILE);
+    if (!data.messages) {
+        data.messages = [];
+        fs.writeJsonSync(DB_FILE, data);
+    }
 }
 
 // Multer storage for product images
@@ -356,6 +363,56 @@ app.delete('/api/products/:id', isAdmin, (req, res) => {
     fs.writeJsonSync(DB_FILE, data);
 
     res.status(204).send();
+});
+
+// Message Routes (Contact Form)
+app.post('/api/messages', (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+        console.log(`[Server] Message reçu de: ${email}`);
+        const data = fs.readJsonSync(DB_FILE);
+
+        const newMessage = {
+            id: Date.now(),
+            name,
+            email,
+            subject,
+            message,
+            date: new Date().toISOString(),
+            status: 'unread'
+        };
+
+        data.messages.push(newMessage);
+        fs.writeJsonSync(DB_FILE, data);
+        res.status(201).json({ message: 'Message envoyé avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de l\'envoi du message' });
+    }
+});
+
+app.get('/api/admin/messages', isAdmin, (req, res) => {
+    try {
+        const data = fs.readJsonSync(DB_FILE);
+        res.json(data.messages || []);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des messages' });
+    }
+});
+
+app.delete('/api/admin/messages/:id', isAdmin, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const data = fs.readJsonSync(DB_FILE);
+        const index = data.messages.findIndex(m => m.id === id);
+
+        if (index === -1) return res.status(404).json({ message: 'Message non trouvé' });
+
+        data.messages.splice(index, 1);
+        fs.writeJsonSync(DB_FILE, data);
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la suppression du message' });
+    }
 });
 
 app.listen(PORT, () => {

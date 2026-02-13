@@ -449,3 +449,12 @@ table {
         transform: translateY(0);
     }
 }
+
+.message-preview {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+    color: #666;
+}

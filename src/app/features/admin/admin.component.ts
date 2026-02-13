@@ -20,7 +20,8 @@ export class AdminComponent implements OnInit {
 
     products: Product[] = [];
     users: any[] = [];
-    activeTab: 'products' | 'users' = 'products';
+    messages: any[] = [];
+    activeTab: 'products' | 'users' | 'messages' = 'products';
     showModal = false;
     showUserModal = false;
     isEditing = false;
@@ -50,7 +51,33 @@ export class AdminComponent implements OnInit {
     ngOnInit() {
         this.loadProducts();
         this.loadUsers();
+        this.loadMessages();
     }
+
+    loadMessages() {
+        this.adminService.getMessages().subscribe(messages => {
+            console.log('Messages chargés:', messages.length);
+            this.messages = messages;
+        });
+    }
+
+    deleteMessage(id: number) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+            this.adminService.deleteMessage(id).subscribe(() => {
+                this.loadMessages();
+            });
+        }
+    }
+
+    switchTab(tab: 'products' | 'users' | 'messages') {
+        this.activeTab = tab;
+        // Toujours rafraîchir les données de l'onglet actif
+        this.loadMessages();
+        this.loadUsers();
+        this.loadProducts();
+    }
+
+
 
     openAddUserModal() {
         this.newUser = {

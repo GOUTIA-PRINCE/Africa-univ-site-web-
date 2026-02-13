@@ -37,4 +37,12 @@ export class AdminService {
   deleteUser(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/users/${id}`, { headers: this.getHeaders() });
   }
+
+  getMessages(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/messages`, { headers: this.getHeaders() });
+  }
+
+  deleteMessage(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/messages/${id}`, { headers: this.getHeaders() });
+  }
 }
