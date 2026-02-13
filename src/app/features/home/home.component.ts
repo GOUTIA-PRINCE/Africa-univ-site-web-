@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
     orderOnWhatsApp(product: Product) {
         const phoneNumber = '690363577';
         const message = `Bonjour, je viens de votre site pour ce produit populaire : ${product.name}.
-Prix : ${product.price} €`;
+Prix : ${product.price} FCFA`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/237${phoneNumber}?text=${encodedMessage}`;

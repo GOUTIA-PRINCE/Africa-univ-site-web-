@@ -31,7 +31,7 @@ export class ProductDetailComponent implements OnInit {
             const phoneNumber = '690363577';
             const message = `Bonjour, je viens de votre site pour ce produit : ${this.product.name}.
 Caractéristiques : ${this.product.description || 'N/A'}.
-Prix : ${this.product.price} €`;
+Prix : ${this.product.price} FCFA`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/237${phoneNumber}?text=${encodedMessage}`;

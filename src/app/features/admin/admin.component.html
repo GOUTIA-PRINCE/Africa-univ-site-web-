@@ -25,13 +25,7 @@
                     <span class="value">{{ users.length }}</span>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fab fa-whatsapp"></i></div>
-                <div class="stat-info">
-                    <span class="label">Messages WhatsApp</span>
-                    <span class="value">En attente</span>
-                </div>
-            </div>
+
         </div>
     </header>
 
@@ -70,7 +64,7 @@
                             </div>
                         </td>
                         <td><span class="badge">{{ product.category }}</span></td>
-                        <td><strong>{{ product.price }} €</strong></td>
+                        <td><strong>{{ product.price }} FCFA</strong></td>
                         <td class="actions">
                             <button class="btn-icon edit" (click)="openEditModal(product)" title="Modifier">
                                 <i class="fas fa-edit"></i>
@@ -198,7 +192,7 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Prix (€)</label>
+                        <label>Prix (FCFA)</label>
                         <input type="number" [(ngModel)]="currentProduct.price" name="price" required>
                     </div>
                     <div class="form-group">

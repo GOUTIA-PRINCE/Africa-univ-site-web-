@@ -97,7 +97,7 @@ export class CatalogComponent implements OnInit {
         const phoneNumber = '690363577';
         const message = `Bonjour, je viens de votre site pour ce produit : ${product.name}.
 Caractéristiques : ${product.description || 'N/A'}.
-Prix : ${product.price} €`;
+Prix : ${product.price} FCFA`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/237${phoneNumber}?text=${encodedMessage}`;

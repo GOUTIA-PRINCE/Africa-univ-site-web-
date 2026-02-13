@@ -14,7 +14,7 @@
             </label>
         </div>
         <div class="filter-group">
-            <h4>Prix max: {{ maxPrice }} €</h4>
+            <h4>Prix max: {{ maxPrice }} FCFA</h4>
             <input type="range" min="0" max="25000" step="100" [(ngModel)]="maxPrice" (input)="applyFilters()">
         </div>
     </aside>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="product-info">
                     <h3 [routerLink]="['/catalog', product.id]">{{ product.name }}</h3>
-                    <p class="price">{{ product.price }} €</p>
+                    <p class="price">{{ product.price }} FCFA</p>
                     <button class="btn btn-primary" (click)="orderOnWhatsApp(product)">Commander</button>
                 </div>
             </div>
