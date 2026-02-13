@@ -59,6 +59,100 @@
     align-items: center;
     gap: 1rem;
 
+    .user-profile-wrapper {
+      position: relative;
+      cursor: pointer;
+
+      .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 30px;
+        transition: background 0.3s;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+
+        .avatar {
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #e67e22;
+        }
+
+        .user-name {
+          font-weight: 600;
+          color: #333;
+          font-size: 0.9rem;
+        }
+
+        i {
+          font-size: 0.8rem;
+          color: #777;
+        }
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 120%;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        width: 200px;
+        padding: 0.5rem 0;
+        z-index: 1001;
+        animation: slideDown 0.3s ease;
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
+          color: #333;
+          font-size: 0.9rem;
+          transition: background 0.2s;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+          cursor: pointer;
+
+          i {
+            color: #777;
+            width: 20px;
+          }
+
+          &:hover {
+            background-color: #f8f9fa;
+            color: #e67e22;
+
+            i {
+              color: #e67e22;
+            }
+          }
+
+          &.logout {
+            color: #e74c3c;
+            border-top: 1px solid #eee;
+            margin-top: 0.25rem;
+
+            i {
+              color: #e74c3c;
+            }
+
+            &:hover {
+              background-color: #fdf2f2;
+            }
+          }
+        }
+      }
+    }
+
+
     .icon-btn {
       background: none;
       border: none;

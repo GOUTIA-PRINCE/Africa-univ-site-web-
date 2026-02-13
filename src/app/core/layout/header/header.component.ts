@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -12,10 +13,21 @@ import { FormsModule } from '@angular/forms';
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-
+    authService = inject(AuthService);
     router = inject(Router);
     isSearchOpen = false;
+    isDropdownOpen = false;
     searchTerm = '';
+
+    toggleDropdown() {
+        this.isDropdownOpen = !this.isDropdownOpen;
+    }
+
+    logout() {
+        this.authService.logout();
+        this.isDropdownOpen = false;
+        this.router.navigate(['/login']);
+    }
 
     toggleSearch() {
         this.isSearchOpen = !this.isSearchOpen;

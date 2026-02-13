@@ -2,24 +2,27 @@
     <header class="admin-header">
         <div class="header-content">
             <h1>Tableau de bord Admin</h1>
-            <button class="btn btn-primary" (click)="openAddModal()">
+            <button class="btn btn-primary" (click)="openAddModal()" *ngIf="activeTab === 'products'">
                 <i class="fas fa-plus"></i> Nouveau Produit
+            </button>
+            <button class="btn btn-primary" (click)="openAddUserModal()" *ngIf="activeTab === 'users'">
+                <i class="fas fa-user-plus"></i> Nouvel Utilisateur
             </button>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card" (click)="activeTab = 'products'" [class.active]="activeTab === 'products'">
                 <div class="stat-icon"><i class="fas fa-box"></i></div>
                 <div class="stat-info">
                     <span class="label">Total Produits</span>
                     <span class="value">{{ products.length }}</span>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-tags"></i></div>
+            <div class="stat-card" (click)="activeTab = 'users'" [class.active]="activeTab === 'users'">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
                 <div class="stat-info">
-                    <span class="label">Catégories</span>
-                    <span class="value">3</span>
+                    <span class="label">Total Utilisateurs</span>
+                    <span class="value">{{ users.length }}</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -32,8 +35,19 @@
         </div>
     </header>
 
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs">
+        <button [class.active]="activeTab === 'products'" (click)="activeTab = 'products'">
+            <i class="fas fa-box"></i> Produits
+        </button>
+        <button [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">
+            <i class="fas fa-users"></i> Gestion Utilisateurs
+        </button>
+    </div>
+
     <div class="content-card">
-        <div class="table-responsive">
+        <!-- Products Table -->
+        <div class="table-responsive" *ngIf="activeTab === 'products'">
             <table>
                 <thead>
                     <tr>
@@ -69,9 +83,107 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Users Table -->
+        <div class="table-responsive" *ngIf="activeTab === 'users'">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users">
+                        <td>
+                            <div class="user-avatar-small">
+                                <img [src]="'http://localhost:3000/' + user.profilePicture"
+                                    (error)="$any($event.target).src='https://ui-avatars.com/api/?name=' + user.firstName"
+                                    alt="Avatar">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-info-cell">
+                                <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+                                <span class="user-id">ID: {{ user.id }}</span>
+                            </div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="role-badge" [class.admin]="user.role === 'admin'">
+                                {{ user.role === 'admin' ? 'Administrateur' : 'Client' }}
+                            </span>
+                        </td>
+                        <td class="actions">
+                            <button class="btn-icon role-toggle" (click)="toggleUserRole(user)"
+                                [title]="user.role === 'admin' ? 'Rendre client' : 'Rendre admin'"
+                                [disabled]="user.id === authService.getUser()?.id">
+                                <i class="fas"
+                                    [ngClass]="user.role === 'admin' ? 'fa-user-minus' : 'fa-user-shield'"></i>
+                            </button>
+                            <button class="btn-icon delete" (click)="deleteUser(user.id)" title="Supprimer"
+                                [disabled]="user.id === authService.getUser()?.id">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Modal Ajout/Modification -->
+    <!-- Modal Ajout Utilisateur -->
+    <div class="modal-overlay" *ngIf="showUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter un Nouvel Utilisateur</h2>
+                <button class="close-btn" (click)="showUserModal = false">&times;</button>
+            </div>
+            <form (ngSubmit)="saveUser()">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" [(ngModel)]="newUser.firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" [(ngModel)]="newUser.lastName" name="lastName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="newUser.email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" [(ngModel)]="newUser.password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Photo de profil (Optionnel)</label>
+                    <div class="file-input-container">
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*" id="userImage"
+                            class="file-input">
+                        <label for="userImage" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            {{ selectedFileName || 'Choisir une photo...' }}
+                        </label>
+                    </div>
+                    <div class="image-preview" *ngIf="imagePreview">
+                        <img [src]="imagePreview" alt="Aperçu">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="showUserModal = false">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer le compte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Ajout/Modification Produit (inchangé) -->
     <div class="modal-overlay" *ngIf="showModal">
         <div class="modal-content">
             <div class="modal-header">

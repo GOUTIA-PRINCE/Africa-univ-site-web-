@@ -8,6 +8,16 @@
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="profile-upload">
+                <div class="profile-preview" [class.no-image]="!imagePreview">
+                    <img *ngIf="imagePreview" [src]="imagePreview" alt="Aperçu">
+                    <i *ngIf="!imagePreview" class="fas fa-user"></i>
+                </div>
+                <label for="profilePicture" class="upload-label">
+                    <i class="fas fa-camera"></i> Photo de profil
+                    <input type="file" id="profilePicture" (change)="onFileSelected($event)" accept="image/*" hidden>
+                </label>
+            </div>
             <div class="form-row">
                 <div class="form-group half">
                     <label for="firstName">Prénom</label>

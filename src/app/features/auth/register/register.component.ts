@@ -17,6 +17,8 @@ export class RegisterComponent {
     private authService = inject(AuthService);
 
     registerForm: FormGroup;
+    selectedFile: File | null = null;
+    imagePreview: string | null = null;
     errorMessage: string = '';
     loading: boolean = false;
 
@@ -35,14 +37,22 @@ export class RegisterComponent {
             ? null : { mismatch: true };
     }
 
+    onFileSelected(event: any) {
+        const file = event.target.files[0];
+        if (file) {
+            this.selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = () => this.imagePreview = reader.result as string;
+            reader.readAsDataURL(file);
+        }
+    }
+
     onSubmit() {
         if (this.registerForm.valid) {
             this.loading = true;
             this.errorMessage = '';
 
-            const { firstName, lastName, email, password } = this.registerForm.value;
-
-            this.authService.register({ firstName, lastName, email, password }).subscribe({
+            this.authService.register(this.registerForm.value, this.selectedFile || undefined).subscribe({
                 next: () => {
                     this.loading = false;
                     alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');

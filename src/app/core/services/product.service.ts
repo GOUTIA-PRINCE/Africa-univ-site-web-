@@ -34,7 +34,10 @@ export class ProductService {
         const formData = new FormData();
         formData.append('product', JSON.stringify(product));
         formData.append('image', imageFile);
-        return this.http.post<Product>(this.apiUrl, formData);
+        const token = localStorage.getItem('token');
+        return this.http.post<Product>(this.apiUrl, formData, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
     }
 
     updateProduct(product: Product, imageFile?: File): Observable<Product> {
@@ -43,10 +46,16 @@ export class ProductService {
         if (imageFile) {
             formData.append('image', imageFile);
         }
-        return this.http.put<Product>(`${this.apiUrl}/${product.id}`, formData);
+        const token = localStorage.getItem('token');
+        return this.http.put<Product>(`${this.apiUrl}/${product.id}`, formData, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
     }
 
     deleteProduct(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+        const token = localStorage.getItem('token');
+        return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
     }
 }

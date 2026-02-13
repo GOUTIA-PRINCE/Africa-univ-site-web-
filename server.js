@@ -15,57 +15,80 @@ app.use(express.json());
 
 // Path to public/assets/image (where Angular serves static files)
 const UPLOAD_DIR = path.join(__dirname, 'public', 'assets', 'image');
+const PROFILES_DIR = path.join(__dirname, 'public', 'assets', 'profiles');
 const DB_FILE = path.join(__dirname, 'db.json');
 
 // Serve static files from the public/assets directory
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 
-// Ensure upload directory exists
+// Ensure directories exist
 fs.ensureDirSync(UPLOAD_DIR);
+fs.ensureDirSync(PROFILES_DIR);
 
 // Ensure db.json exists
 if (!fs.existsSync(DB_FILE)) {
-    fs.writeJsonSync(DB_FILE, { products: [] });
+    fs.writeJsonSync(DB_FILE, { products: [], users: [] });
 }
 
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, UPLOAD_DIR);
-    },
+// Multer storage for product images
+const productStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, UPLOAD_DIR),
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-const upload = multer({ storage: storage });
+// Multer storage for profile pictures
+const profileStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, PROFILES_DIR),
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'user-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const uploadProduct = multer({ storage: productStorage });
+const uploadProfile = multer({ storage: profileStorage });
+
+// Middleware to verify JWT
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if (!token) return res.status(403).json({ message: 'Token requis' });
+
+    jwt.verify(token.replace('Bearer ', ''), SECRET_KEY, (err, decoded) => {
+        if (err) return res.status(401).json({ message: 'Token invalide' });
+        req.userId = decoded.id;
+        req.userRole = decoded.role;
+        next();
+    });
+};
 
 // Auth Routes
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', uploadProfile.single('profilePicture'), async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
         const data = fs.readJsonSync(DB_FILE);
 
-        // Check if user already exists
         if (data.users.find(u => u.email === email)) {
             return res.status(400).json({ message: 'Cet email est déjà utilisé' });
         }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+        const profilePicture = req.file ? `assets/profiles/${req.file.filename}` : 'assets/profiles/default-avatar.png';
 
         const newUser = {
             id: Date.now(),
             firstName,
             lastName,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            profilePicture,
+            role: 'user' // Default role for new users
         };
 
         data.users.push(newUser);
         fs.writeJsonSync(DB_FILE, data);
-
         res.status(201).json({ message: 'Utilisateur créé avec succès' });
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de l\'inscription', error: error.message });
@@ -78,28 +101,181 @@ app.post('/api/auth/login', async (req, res) => {
         const data = fs.readJsonSync(DB_FILE);
 
         const user = data.users.find(u => u.email === email);
-        if (!user) {
-            return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
-        }
+        if (!user) return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
-        }
+        if (!isMatch) return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
 
-        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
-
+        const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
         res.json({
             token,
             user: {
                 id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email
+                email: user.email,
+                profilePicture: user.profilePicture,
+                role: user.role
             }
         });
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la connexion', error: error.message });
+    }
+});
+
+// Middleware to check if user is admin
+const isAdmin = (req, res, next) => {
+    verifyToken(req, res, () => {
+        // req.userRole is set by verifyToken
+        if (req.userRole === 'admin') {
+            next();
+        } else {
+            res.status(403).json({ message: 'Accès refusé. Administrateur uniquement.' });
+        }
+    });
+};
+
+app.put('/api/auth/profile', verifyToken, uploadProfile.single('profilePicture'), async (req, res) => {
+    try {
+        const data = fs.readJsonSync(DB_FILE);
+        const userIndex = data.users.findIndex(u => u.id === req.userId);
+        if (userIndex === -1) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+        const { firstName, lastName, email } = req.body;
+        data.users[userIndex].firstName = firstName || data.users[userIndex].firstName;
+        data.users[userIndex].lastName = lastName || data.users[userIndex].lastName;
+        data.users[userIndex].email = email || data.users[userIndex].email;
+
+        if (req.file) {
+            // Delete old picture if not default
+            const oldPic = data.users[userIndex].profilePicture;
+            if (oldPic && !oldPic.includes('default-avatar.png')) {
+                const oldPath = path.join(__dirname, 'public', oldPic);
+                if (fs.existsSync(oldPath)) fs.removeSync(oldPath);
+            }
+            data.users[userIndex].profilePicture = `assets/profiles/${req.file.filename}`;
+        }
+
+        fs.writeJsonSync(DB_FILE, data);
+        res.json({
+            message: 'Profil mis à jour',
+            user: {
+                id: data.users[userIndex].id,
+                firstName: data.users[userIndex].firstName,
+                lastName: data.users[userIndex].lastName,
+                email: data.users[userIndex].email,
+                profilePicture: data.users[userIndex].profilePicture
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur mise à jour profil', error: error.message });
+    }
+});
+
+app.put('/api/auth/password', verifyToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const data = fs.readJsonSync(DB_FILE);
+        const userIndex = data.users.findIndex(u => u.id === req.userId);
+
+        // Check if user exists (should be caught by verifyToken, but good to double check)
+        if (userIndex === -1) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+        const isMatch = await bcrypt.compare(currentPassword, data.users[userIndex].password);
+        if (!isMatch) return res.status(400).json({ message: 'Mot de passe actuel incorrect' });
+
+        data.users[userIndex].password = await bcrypt.hash(newPassword, 10);
+        fs.writeJsonSync(DB_FILE, data);
+        res.json({ message: 'Mot de passe modifié avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur modification mot de passe', error: error.message });
+    }
+});
+
+// Admin User Management Routes
+app.get('/api/admin/users', isAdmin, (req, res) => {
+    try {
+        const data = fs.readJsonSync(DB_FILE);
+        const users = data.users.map(u => {
+            const { password, ...userWithoutPassword } = u;
+            return userWithoutPassword;
+        });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs' });
+    }
+});
+
+app.post('/api/admin/users', isAdmin, uploadProfile.single('profilePicture'), async (req, res) => {
+    try {
+        const { firstName, lastName, email, password } = req.body;
+        const data = fs.readJsonSync(DB_FILE);
+
+        if (data.users.find(u => u.email === email)) {
+            return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const profilePicture = req.file ? `assets/profiles/${req.file.filename}` : 'assets/profiles/default-avatar.png';
+
+        const newUser = {
+            id: Date.now(),
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            profilePicture,
+            role: 'user'
+        };
+
+        data.users.push(newUser);
+        fs.writeJsonSync(DB_FILE, data);
+        res.status(201).json({ message: 'Utilisateur créé par l\'administrateur' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur', error: error.message });
+    }
+});
+
+app.put('/api/admin/users/:id/role', isAdmin, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { role } = req.body;
+        const data = fs.readJsonSync(DB_FILE);
+        const userIndex = data.users.findIndex(u => u.id === id);
+
+        if (userIndex === -1) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+        data.users[userIndex].role = role;
+        fs.writeJsonSync(DB_FILE, data);
+        res.json({ message: 'Rôle mis à jour avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la mise à jour du rôle' });
+    }
+});
+
+app.delete('/api/admin/users/:id', isAdmin, (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const data = fs.readJsonSync(DB_FILE);
+        const userIndex = data.users.findIndex(u => u.id === id);
+
+        if (userIndex === -1) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+        // Prevent admin from deleting themselves
+        if (id === req.userId) return res.status(400).json({ message: 'Vous ne pouvez pas supprimer votre propre compte' });
+
+        // Delete profile picture if exists
+        const user = data.users[userIndex];
+        if (user.profilePicture && !user.profilePicture.includes('default-avatar.png')) {
+            const picPath = path.join(__dirname, 'public', user.profilePicture);
+            if (fs.existsSync(picPath)) fs.removeSync(picPath);
+        }
+
+        data.users.splice(userIndex, 1);
+        fs.writeJsonSync(DB_FILE, data);
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur' });
     }
 });
 
@@ -120,7 +296,7 @@ app.get('/api/products/:id', (req, res) => {
     }
 });
 
-app.post('/api/products', upload.single('image'), (req, res) => {
+app.post('/api/products', isAdmin, uploadProduct.single('image'), (req, res) => {
     const productData = JSON.parse(req.body.product);
     const data = fs.readJsonSync(DB_FILE);
 
@@ -136,7 +312,7 @@ app.post('/api/products', upload.single('image'), (req, res) => {
     res.status(201).json(newProduct);
 });
 
-app.put('/api/products/:id', upload.single('image'), (req, res) => {
+app.put('/api/products/:id', isAdmin, uploadProduct.single('image'), (req, res) => {
     const id = parseInt(req.params.id);
     const productData = JSON.parse(req.body.product);
     const data = fs.readJsonSync(DB_FILE);
@@ -161,7 +337,7 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
     res.json(data.products[index]);
 });
 
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', isAdmin, (req, res) => {
     const id = parseInt(req.params.id);
     const data = fs.readJsonSync(DB_FILE);
 

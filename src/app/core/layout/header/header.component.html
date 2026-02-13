@@ -11,7 +11,11 @@
                 <li><a routerLink="/catalog" routerLinkActive="active">Boutique</a></li>
                 <li><a routerLink="/about" routerLinkActive="active">À propos</a></li>
                 <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
-                <li><a routerLink="/admin" routerLinkActive="active"><i class="fas fa-user-shield"></i> Admin</a></li>
+                <li *ngIf="(authService.currentUser$ | async)?.role === 'admin'">
+                    <a routerLink="/admin" routerLinkActive="active">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </a>
+                </li>
             </ul>
         </nav>
 
@@ -24,7 +28,29 @@
                     (keyup.enter)="onSearch()">
                 <button (click)="onSearch()"><i class="fas fa-search"></i></button>
             </div>
-            <a routerLink="/login" class="btn btn-primary-outline">Connexion</a>
+            <ng-container *ngIf="!authService.isLoggedIn(); else userProfile">
+                <a routerLink="/login" class="btn btn-primary-outline">Connexion</a>
+            </ng-container>
+
+            <ng-template #userProfile>
+                <div class="user-profile-wrapper" *ngIf="authService.currentUser$ | async as user">
+                    <div class="profile-trigger" (click)="toggleDropdown(); $event.stopPropagation()">
+                        <img [src]="'http://localhost:3000/' + user.profilePicture" alt="Avatar" class="avatar"
+                            (error)="$any($event.target).src='https://ui-avatars.com/api/?name=' + user.firstName">
+                        <span class="user-name">{{ user.firstName }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div class="dropdown-menu" *ngIf="isDropdownOpen">
+                        <a routerLink="/profile" class="dropdown-item" (click)="isDropdownOpen = false">
+                            <i class="fas fa-user"></i> Mon profil
+                        </a>
+                        <button (click)="logout()" class="dropdown-item logout">
+                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
         </div>
     </div>
 </header>
