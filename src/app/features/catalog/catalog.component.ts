@@ -30,7 +30,7 @@ export class CatalogComponent implements OnInit {
         'Vêtements': false,
         'Maison': false
     };
-    maxPrice: number = 2000;
+    maxPrice: number = 20000;
 
     // Pagination states
     currentPage: number = 1;

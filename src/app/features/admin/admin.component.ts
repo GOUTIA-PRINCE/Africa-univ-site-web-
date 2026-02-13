@@ -18,13 +18,17 @@ export class AdminComponent implements OnInit {
     showModal = false;
     isEditing = false;
 
+    selectedFile: File | null = null;
+    selectedFileName: string = '';
+    imagePreview: string | null = null;
+
     // Form model
     currentProduct: Product = {
         id: 0,
         name: '',
         price: 0,
         description: '',
-        image: 'https://placehold.co/300x300',
+        image: '',
         category: 'Électronique'
     };
 
@@ -38,14 +42,32 @@ export class AdminComponent implements OnInit {
         });
     }
 
+    onFileSelected(event: any) {
+        const file = event.target.files[0];
+        if (file) {
+            this.selectedFile = file;
+            this.selectedFileName = file.name;
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.imagePreview = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     openAddModal() {
         this.isEditing = false;
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        this.imagePreview = null;
         this.currentProduct = {
-            id: Math.max(...this.products.map(p => p.id)) + 1,
+            id: 0,
             name: '',
             price: 0,
             description: '',
-            image: 'https://placehold.co/300x300',
+            image: '',
             category: 'Électronique'
         };
         this.showModal = true;
@@ -53,6 +75,9 @@ export class AdminComponent implements OnInit {
 
     openEditModal(product: Product) {
         this.isEditing = true;
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        this.imagePreview = product.image;
         this.currentProduct = { ...product };
         this.showModal = true;
     }
@@ -63,20 +88,27 @@ export class AdminComponent implements OnInit {
 
     saveProduct() {
         if (this.isEditing) {
-            const index = this.products.findIndex(p => p.id === this.currentProduct.id);
-            if (index !== -1) {
-                this.products[index] = { ...this.currentProduct };
-            }
+            this.productService.updateProduct(this.currentProduct, this.selectedFile || undefined).subscribe(() => {
+                this.loadProducts();
+                this.closeModal();
+            });
         } else {
-            this.products.push({ ...this.currentProduct });
+            if (!this.selectedFile) {
+                alert('Veuillez sélectionner une image');
+                return;
+            }
+            this.productService.addProduct(this.currentProduct, this.selectedFile).subscribe(() => {
+                this.loadProducts();
+                this.closeModal();
+            });
         }
-        this.closeModal();
-        // Note: In a real app, we would call a service method to update the backend
     }
 
     deleteProduct(id: number) {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-            this.products = this.products.filter(p => p.id !== id);
+            this.productService.deleteProduct(id).subscribe(() => {
+                this.loadProducts();
+            });
         }
     }
 }

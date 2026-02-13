@@ -103,8 +103,18 @@
                     <textarea [(ngModel)]="currentProduct.description" name="description" rows="3"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>URL Image</label>
-                    <input type="text" [(ngModel)]="currentProduct.image" name="image">
+                    <label>Image du produit</label>
+                    <div class="file-input-container">
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*" id="productImage"
+                            class="file-input">
+                        <label for="productImage" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            {{ selectedFileName || 'Choisir une image...' }}
+                        </label>
+                    </div>
+                    <div class="image-preview" *ngIf="imagePreview">
+                        <img [src]="imagePreview" alt="Aperçu">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
