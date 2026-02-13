@@ -1,7 +1,11 @@
 <div class="auth-container">
     <div class="auth-box">
         <h2>Créer un compte</h2>
-        <p class="subtitle">Rejoignez-nous pour une expérience shopping unique</p>
+        <p>Rejoignez-nous dès aujourd'hui et commencez votre shopping.</p>
+
+        <div class="alert alert-danger" *ngIf="errorMessage">
+            {{ errorMessage }}
+        </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="form-row">
@@ -48,7 +52,9 @@
                     de passe ne correspondent pas</span>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+            <button type="submit" class="btn btn-primary btn-block" [disabled]="loading || registerForm.invalid">
+                {{ loading ? 'Chargement...' : "S'inscrire" }}
+            </button>
         </form>
 
         <div class="auth-footer">

@@ -1,7 +1,11 @@
 <div class="auth-container">
     <div class="auth-card">
-        <h2>{{ isLoginMode ? 'Connexion' : 'Inscription' }}</h2>
+        <h2>Connexion</h2>
         <p class="subtitle">Bienvenue sur AfricaUniv Modern</p>
+
+        <div class="alert alert-danger" *ngIf="errorMessage">
+            {{ errorMessage }}
+        </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
@@ -26,15 +30,15 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
-                {{ isLoginMode ? 'Se connecter' : "S'inscrire" }}
+            <button type="submit" class="btn btn-primary" [disabled]="loading || loginForm.invalid">
+                {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
             </button>
         </form>
 
         <div class="auth-footer">
             <p>
-                {{ isLoginMode ? "Pas encore de compte ?" : "Déjà un compte ?" }}
-                <a (click)="toggleMode()">{{ isLoginMode ? "Créer un compte" : "Se connecter" }}</a>
+                Pas encore de compte ?
+                <a routerLink="/register">Créer un compte</a>
             </p>
         </div>
     </div>

@@ -3,9 +3,12 @@ const multer = require('multer');
 const cors = require('cors');
 const fs = require('fs-extra');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3000;
+const SECRET_KEY = 'votre_cle_secrete_super_secure';
 
 app.use(cors());
 app.use(express.json());
@@ -37,6 +40,68 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+// Auth Routes
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { firstName, lastName, email, password } = req.body;
+        const data = fs.readJsonSync(DB_FILE);
+
+        // Check if user already exists
+        if (data.users.find(u => u.email === email)) {
+            return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = {
+            id: Date.now(),
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword
+        };
+
+        data.users.push(newUser);
+        fs.writeJsonSync(DB_FILE, data);
+
+        res.status(201).json({ message: 'Utilisateur créé avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de l\'inscription', error: error.message });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const data = fs.readJsonSync(DB_FILE);
+
+        const user = data.users.find(u => u.email === email);
+        if (!user) {
+            return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
+        }
+
+        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la connexion', error: error.message });
+    }
+});
 
 // Routes
 app.get('/api/products', (req, res) => {

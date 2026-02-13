@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-register',
@@ -11,16 +12,22 @@ import { Router, RouterLink } from '@angular/router';
     styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-    registerForm: FormGroup;
+    private fb = inject(FormBuilder);
+    private router = inject(Router);
+    private authService = inject(AuthService);
 
-    constructor(private fb: FormBuilder, private router: Router) {
+    registerForm: FormGroup;
+    errorMessage: string = '';
+    loading: boolean = false;
+
+    constructor() {
         this.registerForm = this.fb.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['', Validators.required]
-        }, { validator: this.passwordMatchValidator });
+        }, { validators: this.passwordMatchValidator });
     }
 
     passwordMatchValidator(g: FormGroup) {
@@ -30,12 +37,22 @@ export class RegisterComponent {
 
     onSubmit() {
         if (this.registerForm.valid) {
-            console.log('Registration data:', this.registerForm.value);
-            // Simulate registration
-            setTimeout(() => {
-                alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-                this.router.navigate(['/login']);
-            }, 1000);
+            this.loading = true;
+            this.errorMessage = '';
+
+            const { firstName, lastName, email, password } = this.registerForm.value;
+
+            this.authService.register({ firstName, lastName, email, password }).subscribe({
+                next: () => {
+                    this.loading = false;
+                    alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+                    this.router.navigate(['/login']);
+                },
+                error: (err) => {
+                    this.loading = false;
+                    this.errorMessage = err.error?.message || 'Une erreur est survenue lors de l\'inscription.';
+                }
+            });
         } else {
             this.registerForm.markAllAsTouched();
         }
