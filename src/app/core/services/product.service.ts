@@ -76,4 +76,15 @@ export class ProductService {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     }
+
+    getSettings(): Observable<any> {
+        return this.http.get('http://localhost:3000/api/settings');
+    }
+
+    updateSettings(settings: any): Observable<any> {
+        const token = localStorage.getItem('token');
+        return this.http.put('http://localhost:3000/api/settings', settings, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+    }
 }

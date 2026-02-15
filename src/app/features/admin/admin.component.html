@@ -36,6 +36,13 @@
                     <span class="value">{{ messages.length }}</span>
                 </div>
             </div>
+            <div class="stat-card" (click)="switchTab('settings')" [class.active]="activeTab === 'settings'">
+                <div class="stat-icon"><i class="fas fa-cog"></i></div>
+                <div class="stat-info">
+                    <span class="label">Configuration</span>
+                    <span class="value">Paramètres</span>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -49,6 +56,9 @@
         </button>
         <button [class.active]="activeTab === 'messages'" (click)="switchTab('messages')">
             <i class="fas fa-envelope"></i> Messages
+        </button>
+        <button [class.active]="activeTab === 'settings'" (click)="switchTab('settings')">
+            <i class="fas fa-cog"></i> Paramètres
         </button>
     </div>
 
@@ -181,6 +191,34 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="settings-container" *ngIf="activeTab === 'settings'" style="padding: 2rem;">
+            <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 2rem; border-radius: 12px;">
+                <h3 style="margin-bottom: 2rem; color: var(--secondary-color);">
+                    <i class="fas fa-sliders-h" style="margin-right: 10px;"></i>
+                    Paramètres du catalogue
+                </h3>
+
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                        Prix maximum du filtre (FCFA)
+                    </label>
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+                        Définit la limite supérieure du curseur de prix dans le catalogue pour les clients.
+                    </p>
+                    <input type="number" [(ngModel)]="settings.maxPriceLimit"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                    <button class="btn btn-primary" (click)="saveSettings()">
+                        <i class="fas fa-save" style="margin-right: 8px;"></i>
+                        Enregistrer les modifications
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

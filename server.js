@@ -33,8 +33,11 @@ if (!fs.existsSync(DB_FILE)) {
     const data = fs.readJsonSync(DB_FILE);
     if (!data.messages) {
         data.messages = [];
-        fs.writeJsonSync(DB_FILE, data);
     }
+    if (!data.settings) {
+        data.settings = { maxPriceLimit: 1000000 };
+    }
+    fs.writeJsonSync(DB_FILE, data);
 }
 
 // Multer storage for product images
@@ -474,6 +477,28 @@ app.delete('/api/categories/:name', isAdmin, (req, res) => {
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la suppression de la catégorie' });
+    }
+});
+
+// Settings Routes
+app.get('/api/settings', (req, res) => {
+    try {
+        const data = fs.readJsonSync(DB_FILE);
+        res.json(data.settings || { maxPriceLimit: 1000000 });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des paramètres' });
+    }
+});
+
+app.put('/api/settings', isAdmin, (req, res) => {
+    try {
+        const newSettings = req.body;
+        const data = fs.readJsonSync(DB_FILE);
+        data.settings = { ...data.settings, ...newSettings };
+        fs.writeJsonSync(DB_FILE, data);
+        res.json(data.settings);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la mise à jour des paramètres' });
     }
 });
 

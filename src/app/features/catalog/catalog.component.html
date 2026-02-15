@@ -15,7 +15,8 @@
         </div>
         <div class="filter-group">
             <h4>Prix max: {{ maxPrice }} FCFA</h4>
-            <input type="range" min="0" max="25000" step="100" [(ngModel)]="maxPrice" (input)="applyFilters()">
+            <input type="range" min="0" [max]="maxPriceLimit" step="1000" [(ngModel)]="maxPrice"
+                (input)="applyFilters()">
         </div>
     </aside>
 

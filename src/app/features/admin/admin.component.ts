@@ -21,7 +21,7 @@ export class AdminComponent implements OnInit {
     products: Product[] = [];
     users: any[] = [];
     messages: any[] = [];
-    activeTab: 'products' | 'users' | 'messages' = 'products';
+    activeTab: 'products' | 'users' | 'messages' | 'settings' = 'products';
     showModal = false;
     showUserModal = false;
     showCategoryModal = false;
@@ -32,6 +32,9 @@ export class AdminComponent implements OnInit {
     imagePreview: string | null = null;
     categories: string[] = [];
     newCategory: string = '';
+    settings = {
+        maxPriceLimit: 1000000
+    };
 
     // Form model for products
     currentProduct: Product = {
@@ -56,6 +59,7 @@ export class AdminComponent implements OnInit {
         this.loadUsers();
         this.loadMessages();
         this.loadCategories();
+        this.loadSettings();
     }
 
     loadMessages() {
@@ -73,12 +77,13 @@ export class AdminComponent implements OnInit {
         }
     }
 
-    switchTab(tab: 'products' | 'users' | 'messages') {
+    switchTab(tab: 'products' | 'users' | 'messages' | 'settings') {
         this.activeTab = tab;
         // Toujours rafraîchir les données de l'onglet actif
-        this.loadMessages();
-        this.loadUsers();
-        this.loadProducts();
+        if (tab === 'messages') this.loadMessages();
+        if (tab === 'users') this.loadUsers();
+        if (tab === 'products') this.loadProducts();
+        if (tab === 'settings') this.loadSettings();
     }
 
 
@@ -145,6 +150,19 @@ export class AdminComponent implements OnInit {
                 error: (err) => alert(err.error?.message || 'Erreur lors de la suppression de la catégorie')
             });
         }
+    }
+
+    loadSettings() {
+        this.productService.getSettings().subscribe(settings => {
+            this.settings = settings;
+        });
+    }
+
+    saveSettings() {
+        this.productService.updateSettings(this.settings).subscribe({
+            next: () => alert('Paramètres mis à jour avec succès'),
+            error: (err) => alert('Erreur lors de la mise à jour des paramètres')
+        });
     }
 
     loadUsers() {

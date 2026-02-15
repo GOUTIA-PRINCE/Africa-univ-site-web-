@@ -26,7 +26,8 @@ export class CatalogComponent implements OnInit {
     searchTerm: string = '';
     categories: string[] = [];
     selectedCategories: { [key: string]: boolean } = {};
-    maxPrice: number = 20000;
+    maxPriceLimit: number = 1000000;
+    maxPrice: number = 1000000;
 
     // Pagination states
     currentPage: number = 1;
@@ -39,6 +40,11 @@ export class CatalogComponent implements OnInit {
             this.categories.forEach(cat => {
                 this.selectedCategories[cat] = false;
             });
+        });
+
+        this.productService.getSettings().subscribe(settings => {
+            this.maxPriceLimit = settings.maxPriceLimit;
+            this.maxPrice = settings.maxPriceLimit;
         });
 
         this.productService.getProducts().subscribe(products => {
