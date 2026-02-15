@@ -24,12 +24,8 @@ export class CatalogComponent implements OnInit {
 
     // Filter states
     searchTerm: string = '';
-    categories: string[] = ['Électronique', 'Vêtements', 'Maison'];
-    selectedCategories: { [key: string]: boolean } = {
-        'Électronique': false,
-        'Vêtements': false,
-        'Maison': false
-    };
+    categories: string[] = [];
+    selectedCategories: { [key: string]: boolean } = {};
     maxPrice: number = 20000;
 
     // Pagination states
@@ -38,6 +34,13 @@ export class CatalogComponent implements OnInit {
     totalPages: number = 1;
 
     ngOnInit() {
+        this.productService.getCategories().subscribe(categories => {
+            this.categories = categories;
+            this.categories.forEach(cat => {
+                this.selectedCategories[cat] = false;
+            });
+        });
+
         this.productService.getProducts().subscribe(products => {
             this.allProducts = products;
             this.route.queryParams.subscribe(params => {

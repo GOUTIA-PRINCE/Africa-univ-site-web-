@@ -24,11 +24,14 @@ export class AdminComponent implements OnInit {
     activeTab: 'products' | 'users' | 'messages' = 'products';
     showModal = false;
     showUserModal = false;
+    showCategoryModal = false;
     isEditing = false;
 
     selectedFile: File | null = null;
     selectedFileName: string = '';
     imagePreview: string | null = null;
+    categories: string[] = [];
+    newCategory: string = '';
 
     // Form model for products
     currentProduct: Product = {
@@ -37,7 +40,7 @@ export class AdminComponent implements OnInit {
         price: 0,
         description: '',
         image: '',
-        category: 'Électronique'
+        category: 'autres'
     };
 
     // Form model for users
@@ -52,6 +55,7 @@ export class AdminComponent implements OnInit {
         this.loadProducts();
         this.loadUsers();
         this.loadMessages();
+        this.loadCategories();
     }
 
     loadMessages() {
@@ -110,6 +114,39 @@ export class AdminComponent implements OnInit {
         });
     }
 
+    loadCategories() {
+        this.productService.getCategories().subscribe(categories => {
+            this.categories = categories;
+            if (!this.isEditing && this.categories.length > 0) {
+                this.currentProduct.category = this.categories[0];
+            }
+        });
+    }
+
+    addNewCategory() {
+        if (!this.newCategory.trim()) return;
+        this.productService.addCategory(this.newCategory).subscribe({
+            next: () => {
+                this.loadCategories();
+                this.newCategory = '';
+                this.showCategoryModal = false;
+            },
+            error: (err) => alert(err.error?.message || 'Erreur lors de l\'ajout de la catégorie')
+        });
+    }
+
+    deleteCategory(name: string) {
+        if (confirm(`Voulez-vous vraiment supprimer la catégorie "${name}" ? Les produits associés seront déplacés vers "autres".`)) {
+            this.productService.deleteCategory(name).subscribe({
+                next: () => {
+                    this.loadCategories();
+                    this.loadProducts(); // Reload products as categories might have changed
+                },
+                error: (err) => alert(err.error?.message || 'Erreur lors de la suppression de la catégorie')
+            });
+        }
+    }
+
     loadUsers() {
         this.adminService.getUsers().subscribe(users => {
             this.users = users;
@@ -161,7 +198,7 @@ export class AdminComponent implements OnInit {
             price: 0,
             description: '',
             image: '',
-            category: 'Électronique'
+            category: this.categories.length > 0 ? this.categories[0] : 'autres'
         };
         this.showModal = true;
     }

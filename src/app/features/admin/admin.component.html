@@ -5,6 +5,10 @@
             <button class="btn btn-primary" (click)="openAddModal()" *ngIf="activeTab === 'products'">
                 <i class="fas fa-plus"></i> Nouveau Produit
             </button>
+            <button class="btn btn-secondary" (click)="showCategoryModal = true" *ngIf="activeTab === 'products'"
+                style="margin-left: 10px;">
+                <i class="fas fa-tags"></i> Nouvelle Catégorie
+            </button>
             <button class="btn btn-primary" (click)="openAddUserModal()" *ngIf="activeTab === 'users'">
                 <i class="fas fa-user-plus"></i> Nouvel Utilisateur
             </button>
@@ -249,9 +253,7 @@
                     <div class="form-group">
                         <label>Catégorie</label>
                         <select [(ngModel)]="currentProduct.category" name="category">
-                            <option value="Électronique">Électronique</option>
-                            <option value="Vêtements">Vêtements</option>
-                            <option value="Maison">Maison</option>
+                            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
                         </select>
                     </div>
                 </div>
@@ -278,6 +280,41 @@
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <!-- Modal Ajout Catégorie -->
+    <div class="modal-overlay" *ngIf="showCategoryModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Ajouter une Catégorie</h2>
+                <button class="close-btn" (click)="showCategoryModal = false">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div class="category-list"
+                    style="max-height: 200px; overflow-y: auto; margin-bottom: 1.5rem; border: 1px solid #eee; border-radius: 8px;">
+                    <div *ngFor="let cat of categories"
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #eee;">
+                        <span>{{ cat }}</span>
+                        <button class="btn-icon delete" (click)="deleteCategory(cat)" [disabled]="cat === 'autres'"
+                            title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form (ngSubmit)="addNewCategory()">
+                    <div class="form-group">
+                        <label>Nom de la nouvelle catégorie</label>
+                        <input type="text" [(ngModel)]="newCategory" name="categoryName" required
+                            placeholder="Ex: Réseau">
+                    </div>
+                    <div class="modal-footer" style="padding: 0; border-top: none; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary"
+                            (click)="showCategoryModal = false">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

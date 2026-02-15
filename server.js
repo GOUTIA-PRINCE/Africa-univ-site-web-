@@ -415,6 +415,68 @@ app.delete('/api/admin/messages/:id', isAdmin, (req, res) => {
     }
 });
 
+// Category Routes
+app.get('/api/categories', (req, res) => {
+    try {
+        const data = fs.readJsonSync(DB_FILE);
+        res.json(data.categories || []);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des catégories' });
+    }
+});
+
+app.post('/api/categories', isAdmin, (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name) return res.status(400).json({ message: 'Le nom de la catégorie est requis' });
+
+        const data = fs.readJsonSync(DB_FILE);
+        if (!data.categories) data.categories = [];
+
+        if (data.categories.includes(name)) {
+            return res.status(400).json({ message: 'Cette catégorie existe déjà' });
+        }
+
+        data.categories.push(name);
+        fs.writeJsonSync(DB_FILE, data);
+        res.status(201).json({ name });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la création de la catégorie' });
+    }
+});
+
+app.delete('/api/categories/:name', isAdmin, (req, res) => {
+    try {
+        const name = req.params.name;
+        const data = fs.readJsonSync(DB_FILE);
+
+        if (!data.categories) return res.status(404).json({ message: 'Catégories non trouvées' });
+
+        const index = data.categories.indexOf(name);
+        if (index === -1) return res.status(404).json({ message: 'Catégorie non trouvée' });
+
+        // Remove the category
+        data.categories.splice(index, 1);
+
+        // Optional: Update products belonging to this category to 'autres'
+        data.products.forEach(p => {
+            if (p.category === name) {
+                p.category = 'autres';
+            }
+        });
+
+        // Ensure 'autres' exists if we moved products to it
+        if (data.products.some(p => p.category === 'autres') && !data.categories.includes('autres')) {
+            data.categories.push('autres');
+        }
+
+        fs.writeJsonSync(DB_FILE, data);
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la suppression de la catégorie' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

@@ -58,4 +58,22 @@ export class ProductService {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     }
+
+    getCategories(): Observable<string[]> {
+        return this.http.get<string[]>('http://localhost:3000/api/categories');
+    }
+
+    addCategory(name: string): Observable<any> {
+        const token = localStorage.getItem('token');
+        return this.http.post('http://localhost:3000/api/categories', { name }, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+    }
+
+    deleteCategory(name: string): Observable<void> {
+        const token = localStorage.getItem('token');
+        return this.http.delete<void>(`http://localhost:3000/api/categories/${name}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+    }
 }
