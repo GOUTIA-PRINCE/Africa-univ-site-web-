@@ -9,7 +9,7 @@ import { AboutComponent } from './features/about/about.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'catalog', component: CatalogComponent },
+    { path: 'catalog', redirectTo: '', pathMatch: 'full' },
     { path: 'catalog/:id', loadComponent: () => import('./features/catalog/product-detail/product-detail.component').then(m => m.ProductDetailComponent) },
     { path: 'admin', canActivate: [adminGuard], loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent) },
 

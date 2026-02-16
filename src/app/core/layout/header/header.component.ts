@@ -35,7 +35,7 @@ export class HeaderComponent {
 
     onSearch() {
         if (this.searchTerm.trim()) {
-            this.router.navigate(['/catalog'], { queryParams: { search: this.searchTerm } });
+            this.router.navigate(['/'], { queryParams: { search: this.searchTerm } });
             // Optional: close search bar after search or keep it open
             this.isSearchOpen = false;
         }

@@ -6,9 +6,8 @@
 
         <nav class="main-nav">
             <ul>
-                <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Accueil</a>
+                <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Boutique</a>
                 </li>
-                <li><a routerLink="/catalog" routerLinkActive="active">Boutique</a></li>
                 <li><a routerLink="/about" routerLinkActive="active">À propos</a></li>
                 <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
                 <li *ngIf="(authService.currentUser$ | async)?.role === 'admin'">
