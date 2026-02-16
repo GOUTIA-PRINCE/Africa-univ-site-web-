@@ -16,16 +16,16 @@
   }
 
   .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
+    display: flex;
+    align-items: center;
 
     a {
-      text-decoration: none;
-      color: #333;
+      display: block;
 
-      span {
-        color: #e67e22;
-        /* Primary accent color example */
+      img {
+        height: 60px;
+        width: auto;
+        object-fit: contain;
       }
     }
   }
@@ -47,7 +47,7 @@
 
           &:hover,
           &.active {
-            color: #e67e22;
+            color: var(--primary-color);
           }
         }
       }
@@ -80,7 +80,7 @@
           height: 35px;
           border-radius: 50%;
           object-fit: cover;
-          border: 2px solid #e67e22;
+          border: 2px solid var(--primary-color);
         }
 
         .user-name {
@@ -128,10 +128,10 @@
 
           &:hover {
             background-color: #f8f9fa;
-            color: #e67e22;
+            color: var(--primary-color);
 
             i {
-              color: #e67e22;
+              color: var(--primary-color);
             }
           }
 
@@ -165,7 +165,7 @@
         position: absolute;
         top: -5px;
         right: -8px;
-        background-color: #e67e22;
+        background-color: var(--primary-color);
         color: white;
         font-size: 0.7rem;
         width: 18px;
@@ -179,15 +179,15 @@
 
     .btn-primary-outline {
       padding: 0.5rem 1rem;
-      border: 2px solid #e67e22;
-      color: #e67e22;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
       border-radius: 4px;
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
 
       &:hover {
-        background-color: #e67e22;
+        background-color: var(--primary-color);
         color: white;
       }
     }
@@ -218,12 +218,12 @@
 
       &:focus {
         outline: none;
-        border-color: #e67e22;
+        border-color: var(--primary-color);
       }
     }
 
     button {
-      background: #e67e22;
+      background: var(--primary-color);
       color: white;
       border: none;
       padding: 0.8rem 1.2rem;
@@ -231,7 +231,7 @@
       cursor: pointer;
 
       &:hover {
-        background-color: #d35400; // Hardcoded darken for now
+        background-color: var(--secondary-color);
       }
     }
   }
