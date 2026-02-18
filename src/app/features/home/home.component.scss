@@ -1,6 +1,6 @@
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center top/cover;
-    height: 60vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center top/cover;
+    min-height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,8 +8,11 @@
     color: white;
     margin-bottom: 0;
     position: relative;
+    padding: 2rem 1rem;
 
     .hero-content {
+        max-width: 800px;
+
         h1 {
             font-size: 3.5rem;
             margin-bottom: 1rem;
@@ -30,6 +33,7 @@
             display: flex;
             gap: 1rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -109,6 +113,8 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
 
         h2 {
             font-size: 2rem;
@@ -176,6 +182,8 @@
         overflow-x: auto;
         padding-bottom: 0.5rem;
         flex: 1;
+        min-width: 100%;
+        /* Force full width on mobile if wrapped */
 
         &::-webkit-scrollbar {
             height: 4px;
@@ -383,7 +391,7 @@
     }
 }
 
-/* Skeleton loader for illustration */
+/* Skeleton update */
 .product-card-placeholder {
     background: #fff;
     border-radius: 8px;
@@ -411,6 +419,67 @@
             &.price {
                 width: 40%;
             }
+        }
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 50vh;
+
+        .hero-content {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .features {
+        padding: 2rem 1rem;
+        grid-template-columns: 1fr;
+        /* Stack features on very small screens */
+    }
+
+    .horizontal-filters {
+        flex-direction: column;
+        align-items: stretch;
+
+        .category-scroll {
+            width: 100%;
+            min-width: 0;
+            /* Reset min-width to allow shrinking within flex container */
+        }
+
+        .items-per-page-inline,
+        .price-filter-inline {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .product-card {
+        .product-image {
+            height: 160px;
+        }
+    }
+
+    .pagination {
+        flex-direction: column;
+        margin-top: 2rem;
+
+        .page-numbers {
+            flex-wrap: wrap;
+            justify-content: center;
         }
     }
 }

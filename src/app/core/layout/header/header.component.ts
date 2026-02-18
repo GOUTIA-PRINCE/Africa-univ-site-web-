@@ -17,10 +17,19 @@ export class HeaderComponent {
     router = inject(Router);
     isSearchOpen = false;
     isDropdownOpen = false;
+    isMobileMenuOpen = false;
     searchTerm = '';
 
     toggleDropdown() {
         this.isDropdownOpen = !this.isDropdownOpen;
+    }
+
+    toggleMobileMenu() {
+        this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    }
+
+    closeMobileMenu() {
+        this.isMobileMenuOpen = false;
     }
 
     logout() {
@@ -38,6 +47,7 @@ export class HeaderComponent {
             this.router.navigate(['/'], { queryParams: { search: this.searchTerm } });
             // Optional: close search bar after search or keep it open
             this.isSearchOpen = false;
+            this.closeMobileMenu();
         }
     }
 }

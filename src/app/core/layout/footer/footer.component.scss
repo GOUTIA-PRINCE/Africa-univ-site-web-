@@ -54,4 +54,18 @@
         color: #666;
         font-size: 0.9rem;
     }
+
+    @media (max-width: 768px) {
+        text-align: center;
+
+        .container {
+            gap: 2.5rem;
+            grid-template-columns: 1fr;
+            padding-bottom: 2rem;
+        }
+
+        .footer-logo {
+            margin: 0 auto 1.5rem;
+        }
+    }
 }
